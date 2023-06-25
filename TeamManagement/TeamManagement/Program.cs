@@ -1,10 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using TeamManagement.Data;
+using TeamManagement.Settings;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+Dependencies.Inject(builder);
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
@@ -18,7 +30,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
+app.UseAuthentication();
+
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 
